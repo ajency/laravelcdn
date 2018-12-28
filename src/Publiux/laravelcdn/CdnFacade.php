@@ -149,10 +149,10 @@ class CdnFacade implements CdnFacadeInterface
             $manifest = json_decode(file_get_contents(public_path('mix-manifest.json')), true);
         }
         if (isset($manifest['/' . $path])) {
-            return $this->generateUrl($manifest['/' . $path], 'public/');
+            return $this->generateUrl($manifest['/' . $path], $this->configurations['providers']['aws']['s3']['upload_folder'].'public/');
         }
         if (isset($manifest[$path])) {
-            return $this->generateUrl($manifest[$path], 'public/');
+            return $this->generateUrl($manifest[$path], $this->configurations['providers']['aws']['s3']['upload_folder'].'public/');
         }
         throw new \InvalidArgumentException("File {$path} not defined in asset manifest.");
     }
