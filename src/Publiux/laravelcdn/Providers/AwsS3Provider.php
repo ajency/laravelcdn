@@ -179,7 +179,7 @@ class AwsS3Provider extends Provider implements ProviderInterface
             foreach ($assets as $file) {
                 try {
                     $this->console->writeln('<fg=cyan>'.'Uploading file path: '.$file->getRealpath().'</fg=cyan>');
-                    $command = $this->s3_client->getCommand('putObject', [
+                    $uploadProperties = [
 
                         // the bucket name
                         'Bucket' => $this->getBucket(),
@@ -193,7 +193,11 @@ class AwsS3Provider extends Provider implements ProviderInterface
                         'CacheControl' => $this->default['providers']['aws']['s3']['cache-control'],
                         'Metadata' => $this->default['providers']['aws']['s3']['metadata'],
                         'Expires' => $this->default['providers']['aws']['s3']['expires'],
-                    ]);
+                    ];
+                    if(isset($this->default['providers']['aws']['s3']['metadata']['ContentEncoding']) && $this->default['providers']['aws']['s3']['metadata']['ContentEncoding'] == 'gzip'){
+                        if(strpos($file->getPathName(),'/css/') || strpos($file->getPathName(),'/js/') ) $uploadProperties['ContentEncoding'] = 'gzip';
+                    }
+                    $command = $this->s3_client->getCommand('putObject', $uploadProperties);
 //                var_dump(get_class($command));exit();
 
 
